@@ -34,8 +34,8 @@ export function createShaderProgram(gl, vertexShaderSource, fragmentShaderSource
 }
 
 export function rotate([x, y], angle) {
-    const sin = Math.sin(angle)
-    const cos = Math.cos(angle)
+    const sin = Math.sin(-angle)
+    const cos = Math.cos(-angle)
     return [
         x * cos - y * sin,
         x * sin + y * cos
