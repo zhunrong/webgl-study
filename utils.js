@@ -32,3 +32,12 @@ export function createShaderProgram(gl, vertexShaderSource, fragmentShaderSource
     }
     throw new Error(gl.getProgramInfoLog(program))
 }
+
+export function rotate([x, y], angle) {
+    const sin = Math.sin(angle)
+    const cos = Math.cos(angle)
+    return [
+        x * cos - y * sin,
+        x * sin + y * cos
+    ]
+}
