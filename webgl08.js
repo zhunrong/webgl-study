@@ -1,4 +1,4 @@
-import { createWebGLContext, createShaderProgram, rotate } from './utils.js'
+import { createWebGLContext, createShaderProgram } from './utils.js'
 import Matrix4 from './Matrix4.js'
 
 const gl = createWebGLContext()

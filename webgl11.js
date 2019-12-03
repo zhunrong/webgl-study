@@ -1,3 +1,6 @@
+/**
+ * 将原点从坐上角移动到画布中心
+ */
 import { createWebGLContext, createShaderProgram } from './utils.js'
 import Matrix4 from './Matrix4.js'
 
@@ -11,7 +14,7 @@ const VERTEX_SHADER_SOURCE = `
 
     // 坐标系转换函数
     vec2 convert(vec2 origin) {
-        return origin * vec2(2.0,-2.0) / u_Resolution + vec2(-1.0,1.0);
+        return origin * 2.0 / u_Resolution;
     }
 
     void main() {
@@ -40,8 +43,8 @@ const buffer = gl.createBuffer()
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
 const vertices = new Float32Array([
     0, 0,
-    0, 200,
-    200, 0
+    0, 100,
+    100, 0
 ])
 
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
