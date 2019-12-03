@@ -8,8 +8,13 @@ export function createWebGLContext() {
     return gl
 }
 
-// const gl = createWebGLContext()
 
+/**
+ * 创建着色器
+ * @param {WebGLRenderingContext} gl 
+ * @param {string} type 
+ * @param {string} source 
+ */
 export function createShader(gl, type, source) {
     const shader = gl.createShader(type)
     gl.shaderSource(shader, source)
@@ -20,6 +25,12 @@ export function createShader(gl, type, source) {
     throw new Error(gl.getShaderInfoLog(shader))
 }
 
+/**
+ * 创建着色器程序
+ * @param {WebGLRenderingContext} gl 
+ * @param {string} vertexShaderSource 
+ * @param {string} fragmentShaderSource 
+ */
 export function createShaderProgram(gl, vertexShaderSource, fragmentShaderSource) {
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource)
     const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource)
