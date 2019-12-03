@@ -52,12 +52,20 @@ export class Matrix4 {
     }
 
     /**
-     * 乘以目标矩阵
+     * 当前矩阵乘以目标矩阵
      * @param {Matrix4} matrix4 
      * @return {this} this
      */
     multiply(matrix4) {
         return this.multiplyMatrices(this, matrix4)
+    }
+
+    /**
+     * 将目标矩阵乘以当前矩阵
+     * @param {Matrix4} matrix4 
+     */
+    premultiply(matrix4) {
+        return this.multiplyMatrices(matrix4, this)
     }
 
     /**
@@ -136,6 +144,36 @@ export class Matrix4 {
             sx, 0, 0, 0,
             0, sy, 0, 0,
             0, 0, sz, 0,
+            0, 0, 0, 1
+        )
+    }
+
+    /**
+     * 绕X轴 - 旋转矩阵
+     * @param {number} angle
+     */
+    static rotationX(angle) {
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+        return new Matrix4().set(
+            1, 0, 0, 0,
+            0, cos, sin, 0,
+            0, -sin, cos, 0,
+            0, 0, 0, 1
+        )
+    }
+
+    /**
+     * 绕Y轴 - 旋转矩阵
+     * @param {number} angle 
+     */
+    static rotationY(angle) {
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+        return new Matrix4().set(
+            cos, 0, sin, 0,
+            0, 1, 0, 0,
+            -sin, 0, cos, 0,
             0, 0, 0, 1
         )
     }
