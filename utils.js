@@ -52,3 +52,21 @@ export function rotate([x, y], angle) {
         x * sin + y * cos
     ]
 }
+
+/**
+ * 加载图片
+ * @param {string} url
+ * @return {Promise<HTMLImageElement>} 
+ */
+export function load(url) {
+    return new Promise((resolve, reject) => {
+        const image = new Image()
+        image.src = url
+        image.onload = () => {
+            resolve(image)
+        }
+        image.onerror = error => {
+            reject(error)
+        }
+    })
+}
