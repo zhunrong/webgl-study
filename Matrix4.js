@@ -119,6 +119,16 @@ export class Matrix4 {
     }
 
     /**
+     * 转置
+     */
+    transpose() { }
+
+    /**
+     * 逆矩阵
+     */
+    inverse() { }
+
+    /**
      * 平移矩阵
      * @param {number} tx 
      * @param {number} ty 
@@ -171,9 +181,9 @@ export class Matrix4 {
         const sin = Math.sin(angle)
         const cos = Math.cos(angle)
         return new Matrix4().set(
-            cos, 0, sin, 0,
+            cos, 0, -sin, 0,
             0, 1, 0, 0,
-            -sin, 0, cos, 0,
+            sin, 0, cos, 0,
             0, 0, 0, 1
         )
     }
@@ -189,6 +199,57 @@ export class Matrix4 {
             cos, sin, 0, 0,
             -sin, cos, 0, 0,
             0, 0, 1, 0,
+            0, 0, 0, 1
+        )
+    }
+
+    /**
+     * 投影矩阵
+     * @param {number} width 
+     * @param {number} height 
+     * @param {number} depth 
+     */
+    static projection(width, height, depth) {
+        return new Matrix4().set(
+            2 / width, 0, 0, 0,
+            0, 2 / height, 0, 0,
+            0, 0, 2 / depth, 0,
+            0, 0, 0, 1
+        )
+    }
+
+    /**
+     * 视图矩阵
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @param {number} atX 
+     * @param {number} atY 
+     * @param {number} atZ 
+     * @param {number} upX 
+     * @param {number} upY 
+     * @param {number} upZ 
+     */
+    static viewMatrix(x, y, z, atX, atY, atZ, upX, upY, upZ) {
+        return Matrix4.translation(-x, -y, -z)
+    }
+
+    /**
+     * 透视投影
+     */
+    static perspective() { }
+
+    /**
+     * 正射投影
+     * @param {number} width 
+     * @param {number} height 
+     * @param {number} depth 
+     */
+    static orthographic(width, height, depth) {
+        return new Matrix4().set(
+            2 / width, 0, 0, 0,
+            0, 2 / height, 0, 0,
+            0, 0, 2 / depth, 0,
             0, 0, 0, 1
         )
     }
