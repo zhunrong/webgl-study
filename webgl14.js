@@ -10,12 +10,13 @@ const VERTEX_SHADER_SOURCE = `
     precision mediump float;
     attribute vec4 a_Position;
     attribute vec3 a_Color;
-    uniform mat4 u_Matrix;
-    uniform mat4 u_Projection;
+    uniform mat4 u_ModelMatrix;
+    uniform mat4 u_ProjMatrix;
+    uniform mat4 u_ViewMatrix;
     varying vec3 v_Color;
 
     void main() {
-        gl_Position = u_Projection * u_Matrix * a_Position;
+        gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
         v_Color = a_Color;
     }
 `
@@ -53,26 +54,27 @@ gl.enable(gl.CULL_FACE)
 // 开始深度测试
 gl.enable(gl.DEPTH_TEST)
 
-const matrixLocation = gl.getUniformLocation(program, 'u_Matrix')
-const matrix = new Matrix4()
-const rotationX = Matrix4.rotationX(Math.PI / 180 * 1)
-const rotationY = Matrix4.rotationY(Math.PI / 180 * 1)
-const rotationZ = Matrix4.rotationZ(Math.PI / 180 * 1)
-const projection = Matrix4.orthographic(window.innerWidth, window.innerHeight, 1000)
-const projectLocation = gl.getUniformLocation(program, 'u_Projection')
-gl.uniformMatrix4fv(projectLocation, false, projection.elements)
+const modelMatrixLocation = gl.getUniformLocation(program, 'u_ModelMatrix')
+const modelMatrix = new Matrix4()
+const rotationX = Matrix4.rotationX((Math.PI / 180) * 1)
+const rotationY = Matrix4.rotationY((Math.PI / 180) * 1)
+const rotationZ = Matrix4.rotationZ((Math.PI / 180) * 1)
+const projectionMatrix = Matrix4.orthographic(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 1, 2000)
+const projMatrixLocation = gl.getUniformLocation(program, 'u_ProjMatrix')
+gl.uniformMatrix4fv(projMatrixLocation, false, projectionMatrix.elements)
+const viewMatrix = Matrix4.lookAt(0, 0, 1000, 0, 0, 0, 0, 1, 0)
+const viewMatrixLocation = gl.getUniformLocation(program, 'u_ViewMatrix')
+gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix.elements)
 
 function render() {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-    // 旋转
-    matrix.premultiply(rotationX)
-    matrix.premultiply(rotationY)
-    matrix.premultiply(rotationZ)
-    gl.uniformMatrix4fv(matrixLocation, false, matrix.elements)
-    gl.drawArrays(gl.TRIANGLES, 0, verticesAndColors.length / 6)
-    requestAnimationFrame(render)
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+  // 旋转
+  modelMatrix.premultiply(rotationX)
+  modelMatrix.premultiply(rotationY)
+  modelMatrix.premultiply(rotationZ)
+  gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
+  gl.drawArrays(gl.TRIANGLES, 0, verticesAndColors.length / 6)
+  requestAnimationFrame(render)
 }
 
 render()
-
-
