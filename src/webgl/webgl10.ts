@@ -1,5 +1,9 @@
-import { createWebGLContext, createShaderProgram } from './utils.js'
-import Matrix4 from './Matrix4.js'
+/**
+ * 二维动画
+ */
+import Matrix4 from '../math/Matrix4'
+import Vector3 from '../math/Vector3'
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
@@ -32,16 +36,8 @@ const FRAG_SHADER_SOURCE = `
 const program = createShaderProgram(gl, VERTEX_SHADER_SOURCE, FRAG_SHADER_SOURCE)
 gl.useProgram(program)
 
-
 const resolutionLocation = gl.getUniformLocation(program, 'u_Resolution')
 gl.uniform2fv(resolutionLocation, new Float32Array([window.innerWidth, window.innerHeight]))
-const matrixLocation = gl.getUniformLocation(program, 'u_Matrix')
-const rotation = Matrix4.rotationZ(Math.PI / 180 * 45)
-const translation = Matrix4.translation(200, 200, 0)
-const matrix = new Matrix4()
-// mat4(先旋转再平移)*vec4 = mat4(平移)*mat4(旋转)*vec4
-matrix.multiplyMatrices(translation, rotation)
-gl.uniformMatrix4fv(matrixLocation, false, matrix.elements)
 
 const pointLocation = gl.getAttribLocation(program, 'a_Point')
 const buffer = gl.createBuffer()
@@ -49,7 +45,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
 const vertices = new Float32Array([
     0, 0,
     0, 200,
-    200, 0
+    200, 0,
 ])
 
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
@@ -57,7 +53,28 @@ gl.vertexAttribPointer(pointLocation, 2, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(pointLocation)
 
 gl.clearColor(0, 0, 0, 1)
-gl.clear(gl.COLOR_BUFFER_BIT)
 
 gl.drawArrays(gl.TRIANGLES, 0, 3)
 
+const matrixLocation = gl.getUniformLocation(program, 'u_Matrix')
+const matrix = new Matrix4()
+const rMatrix = Matrix4.rotationZ(Math.PI / 180 * 1)
+const tMatrix1 = Matrix4.translation(new Vector3(200, 200, 0))
+const tMatrix2 = Matrix4.translation(new Vector3(250, 250, 0))
+const tMatrix3 = Matrix4.translation(new Vector3(-250, -250, 0))
+matrix.premultiply(tMatrix1)
+
+function render() {
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    // 将三角形旋转中心移至原点
+    matrix.premultiply(tMatrix3)
+    // 旋转
+    matrix.premultiply(rMatrix)
+    // 再将旋转中心位置还原
+    matrix.premultiply(tMatrix2)
+    gl.uniformMatrix4fv(matrixLocation, false, matrix.elements)
+    gl.drawArrays(gl.TRIANGLES, 0, 3)
+    requestAnimationFrame(render)
+}
+
+render()

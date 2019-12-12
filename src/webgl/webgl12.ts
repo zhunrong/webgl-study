@@ -1,8 +1,9 @@
 /**
  * gl.vertexAttribPointer()方法的高级用法
  */
-import { createWebGLContext, createShaderProgram } from './utils.js'
-import Matrix4 from './Matrix4.js'
+import Matrix4 from '../math/Matrix4'
+import Vector3 from '../math/Vector3'
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
@@ -45,7 +46,7 @@ gl.uniform2fv(resolutionLocation, new Float32Array([window.innerWidth, window.in
 const verticesAndColors = new Float32Array([
     0, 0, 1, 0, 0, // 坐标+色值
     0, 100, 0, 1, 0, // 坐标+色值
-    100, 0, 0, 0, 1 // 坐标+色值
+    100, 0, 0, 0, 1, // 坐标+色值
 ])
 const elementSize = verticesAndColors.BYTES_PER_ELEMENT
 
@@ -66,24 +67,23 @@ gl.clearColor(0, 0, 0, 1)
 
 const matrixLocation = gl.getUniformLocation(program, 'u_Matrix')
 const matrix = new Matrix4()
-const rotation = Matrix4.rotationZ(Math.PI / 180 * 1)
-const translation1 = Matrix4.translation(200, 200, 0)
-const translation2 = Matrix4.translation(250, 250, 0)
-const translation3 = Matrix4.translation(-250, -250, 0)
-matrix.premultiply(translation1)
+const rMatrix = Matrix4.rotationZ(Math.PI / 180 * 1)
+const tMatrix1 = Matrix4.translation(new Vector3(200, 200, 0))
+const tMatrix2 = Matrix4.translation(new Vector3(250, 250, 0))
+const tMatrix3 = Matrix4.translation(new Vector3(-250, -250, 0))
+matrix.premultiply(tMatrix1)
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT)
     // 将三角形旋转中心移至原点
-    matrix.premultiply(translation3)
+    matrix.premultiply(tMatrix3)
     // 旋转
-    matrix.premultiply(rotation)
+    matrix.premultiply(rMatrix)
     // 再将旋转中心位置还原
-    matrix.premultiply(translation2)
+    matrix.premultiply(tMatrix2)
     gl.uniformMatrix4fv(matrixLocation, false, matrix.elements)
     gl.drawArrays(gl.LINE_LOOP, 0, 3)
     requestAnimationFrame(render)
 }
 
 render()
-

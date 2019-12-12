@@ -1,8 +1,9 @@
 /**
- * 正射投影
+ * gl.drawElements的用法
  */
-import { createWebGLContext, createShaderProgram, cubeVerticesAndColors } from './utils.js'
-import Matrix4 from './Matrix4.js'
+import Matrix4 from '../math/Matrix4'
+import Vector3 from '../math/Vector3'
+import { createShaderProgram, createWebGLContext, cubeVerticesAndColors24 } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
@@ -32,7 +33,22 @@ const FRAG_SHADER_SOURCE = `
 const program = createShaderProgram(gl, VERTEX_SHADER_SOURCE, FRAG_SHADER_SOURCE)
 gl.useProgram(program)
 
-const verticesAndColors = cubeVerticesAndColors()
+const verticesAndColors = cubeVerticesAndColors24()
+// prettier-ignore
+const indices = new Int8Array([
+    // 正面
+    0, 1, 2, 2, 3, 0,
+    // 右侧
+    4, 5, 6, 6, 7, 4,
+    // 上侧
+    8, 9, 10, 10, 9, 11,
+    // 下侧
+    12, 13, 14, 14, 13, 15,
+    // 左侧
+    16, 17, 18, 18, 19, 16,
+    // 背面
+    20, 21, 22, 22, 23, 20,
+])
 
 const elementSize = verticesAndColors.BYTES_PER_ELEMENT
 
@@ -48,6 +64,10 @@ const colorLocation = gl.getAttribLocation(program, 'a_Color')
 gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 6 * elementSize, 3 * elementSize)
 gl.enableVertexAttribArray(colorLocation)
 
+const indicesBuffer = gl.createBuffer()
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer)
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
+
 gl.clearColor(0, 0, 0, 1)
 // 只绘制正面（逆时针的三角形）
 gl.enable(gl.CULL_FACE)
@@ -56,25 +76,26 @@ gl.enable(gl.DEPTH_TEST)
 
 const modelMatrixLocation = gl.getUniformLocation(program, 'u_ModelMatrix')
 const modelMatrix = new Matrix4()
+const viewMatrix = Matrix4.lookAt(new Vector3(0, 0, 500), new Vector3(0, 0, 0), new Vector3(0, 1, 0))
 const rotationX = Matrix4.rotationX((Math.PI / 180) * 1)
 const rotationY = Matrix4.rotationY((Math.PI / 180) * 1)
 const rotationZ = Matrix4.rotationZ((Math.PI / 180) * 1)
-const projectionMatrix = Matrix4.orthographic(-window.innerWidth / 2, window.innerWidth / 2, window.innerHeight / 2, -window.innerHeight / 2, 1, 2000)
+const projectionMatrix = Matrix4.perspective((45 / 180) * Math.PI, window.innerWidth / window.innerHeight, 1, 2000)
 const projMatrixLocation = gl.getUniformLocation(program, 'u_ProjMatrix')
 gl.uniformMatrix4fv(projMatrixLocation, false, projectionMatrix.elements)
-const viewMatrix = Matrix4.lookAt(0, 0, 1000, 0, 0, 0, 0, 1, 0)
 const viewMatrixLocation = gl.getUniformLocation(program, 'u_ViewMatrix')
 gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix.elements)
 
 function render() {
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-  // 旋转
-  modelMatrix.premultiply(rotationX)
-  modelMatrix.premultiply(rotationY)
-  modelMatrix.premultiply(rotationZ)
-  gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
-  gl.drawArrays(gl.TRIANGLES, 0, verticesAndColors.length / 6)
-  requestAnimationFrame(render)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.clear(gl.DEPTH_BUFFER_BIT)
+    // 旋转
+    modelMatrix.premultiply(rotationX)
+    modelMatrix.premultiply(rotationY)
+    modelMatrix.premultiply(rotationZ)
+    gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_BYTE, 0)
+    requestAnimationFrame(render)
 }
 
 render()

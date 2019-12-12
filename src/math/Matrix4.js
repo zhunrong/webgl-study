@@ -183,8 +183,8 @@ export class Matrix4 {
     // prettier-ignore
     return new Matrix4().set(
             1, 0, 0, 0,
-            0, cos, sin, 0,
-            0, -sin, cos, 0,
+            0, cos, -sin, 0,
+            0, sin, cos, 0,
             0, 0, 0, 1
         )
   }
@@ -198,9 +198,9 @@ export class Matrix4 {
     const cos = Math.cos(angle)
     // prettier-ignore
     return new Matrix4().set(
-            cos, 0, -sin, 0,
+            cos, 0, sin, 0,
             0, 1, 0, 0,
-            sin, 0, cos, 0,
+            -sin, 0, cos, 0,
             0, 0, 0, 1
         )
   }
@@ -214,8 +214,8 @@ export class Matrix4 {
     const cos = Math.cos(angle)
     // prettier-ignore
     return new Matrix4().set(
-            cos, sin, 0, 0,
-            -sin, cos, 0, 0,
+            cos, -sin, 0, 0,
+            sin, cos, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1
         )

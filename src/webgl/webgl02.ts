@@ -1,4 +1,7 @@
-import { createWebGLContext, createShaderProgram } from './utils.js'
+/**
+ * shader attribute
+ */
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 

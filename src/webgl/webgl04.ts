@@ -1,8 +1,12 @@
-import { createWebGLContext, createShaderProgram } from './utils.js'
+/**
+ * 片元着色器渐变效果
+ */
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
 const VERTEX_SHADER_SOURCE = `
+    precision mediump float;
     attribute vec2 a_Point;
     uniform vec2 u_Resolution;
 
@@ -18,8 +22,11 @@ const VERTEX_SHADER_SOURCE = `
 `
 
 const FRAG_SHADER_SOURCE = `
+    precision mediump float;
+    uniform vec2 u_Resolution;
+
     void main() {
-        gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        gl_FragColor = vec4(gl_FragCoord.xy / u_Resolution,0.0,1.0);
     }
 `
 
@@ -34,9 +41,8 @@ gl.uniform2fv(resolutionLocation, new Float32Array([window.innerWidth, window.in
 gl.clearColor(0, 0, 0, 1)
 gl.clear(gl.COLOR_BUFFER_BIT)
 
-
-const coords = []
-gl.canvas.addEventListener('click', e => {
+const coords: number[] = [];
+(gl.canvas as HTMLCanvasElement).addEventListener('click', (e: MouseEvent) => {
     const { clientX, clientY } = e
     coords.push(clientX, clientY)
     gl.clear(gl.COLOR_BUFFER_BIT)

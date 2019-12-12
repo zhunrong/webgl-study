@@ -1,4 +1,7 @@
-import { createWebGLContext, createShaderProgram } from './utils.js'
+/**
+ * 初识着色器
+ */
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 

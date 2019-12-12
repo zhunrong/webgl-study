@@ -1,8 +1,9 @@
 /**
  * 透视投影
  */
-import { createWebGLContext, createShaderProgram, cubeVerticesAndColors } from './utils.js'
-import Matrix4 from './Matrix4.js'
+import Matrix4 from '../math/Matrix4'
+import Vector3 from '../math/Vector3'
+import { createShaderProgram, createWebGLContext, cubeVerticesAndColors } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
@@ -56,7 +57,7 @@ gl.enable(gl.DEPTH_TEST)
 
 const modelMatrixLocation = gl.getUniformLocation(program, 'u_ModelMatrix')
 const modelMatrix = new Matrix4()
-const viewMatrix = Matrix4.lookAt(0, 0, 500, 0, 0, 0, 0, 1, 0)
+const viewMatrix = Matrix4.lookAt(new Vector3(0, 0, 500), new Vector3(0, 0, 0), new Vector3(0, 1, 0))
 const rotationX = Matrix4.rotationX((Math.PI / 180) * 1)
 const rotationY = Matrix4.rotationY((Math.PI / 180) * 1)
 const rotationZ = Matrix4.rotationZ((Math.PI / 180) * 1)
@@ -67,14 +68,15 @@ const viewMatrixLocation = gl.getUniformLocation(program, 'u_ViewMatrix')
 gl.uniformMatrix4fv(viewMatrixLocation, false, viewMatrix.elements)
 
 function render() {
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-  // 旋转
-  modelMatrix.premultiply(rotationX)
-  modelMatrix.premultiply(rotationY)
-  modelMatrix.premultiply(rotationZ)
-  gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
-  gl.drawArrays(gl.TRIANGLES, 0, verticesAndColors.length / 6)
-  requestAnimationFrame(render)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.clear(gl.DEPTH_BUFFER_BIT)
+    // 旋转
+    modelMatrix.premultiply(rotationX)
+    modelMatrix.premultiply(rotationY)
+    modelMatrix.premultiply(rotationZ)
+    gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
+    gl.drawArrays(gl.TRIANGLES, 0, verticesAndColors.length / 6)
+    requestAnimationFrame(render)
 }
 
 render()

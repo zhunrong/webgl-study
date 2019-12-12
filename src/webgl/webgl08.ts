@@ -1,5 +1,8 @@
-import { createWebGLContext, createShaderProgram } from './utils.js'
-import Matrix4 from './Matrix4.js'
+/**
+ * Matrix4
+ */
+import Matrix4 from '../math/Matrix4'
+import { createShaderProgram, createWebGLContext } from '../utils/webgl-utils'
 
 const gl = createWebGLContext()
 
@@ -32,7 +35,6 @@ const FRAG_SHADER_SOURCE = `
 const program = createShaderProgram(gl, VERTEX_SHADER_SOURCE, FRAG_SHADER_SOURCE)
 gl.useProgram(program)
 
-
 const resolutionLocation = gl.getUniformLocation(program, 'u_Resolution')
 gl.uniform2fv(resolutionLocation, new Float32Array([window.innerWidth, window.innerHeight]))
 const rotationLocation = gl.getUniformLocation(program, 'u_Rotation')
@@ -45,7 +47,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
 const vertices = new Float32Array([
     0, 0,
     0, 200,
-    200, 0
+    200, 0,
 ])
 
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
@@ -56,4 +58,3 @@ gl.clearColor(0, 0, 0, 1)
 gl.clear(gl.COLOR_BUFFER_BIT)
 
 gl.drawArrays(gl.TRIANGLES, 0, 3)
-

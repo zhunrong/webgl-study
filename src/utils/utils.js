@@ -4,7 +4,6 @@ export function createWebGLContext() {
     canvas.height = window.innerHeight
     document.body.appendChild(canvas)
     const gl = canvas.getContext('webgl')
-    window.gl = gl
     return gl
 }
 
