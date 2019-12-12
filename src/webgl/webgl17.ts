@@ -15,13 +15,14 @@ const VERTEX_SHADER_SOURCE = `
     uniform mat4 u_ModelMatrix;
     uniform mat4 u_ProjMatrix;
     uniform mat4 u_ViewMatrix;
+    uniform mat4 u_NormalMatrix;
     varying vec3 v_Color;
     varying vec3 v_Normal;
 
     void main() {
         gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
         v_Color = a_Color;
-        v_Normal = mat3(u_ModelMatrix) * a_Normal;
+        v_Normal = normalize(mat3(u_NormalMatrix) * a_Normal);
     }
 `
 
@@ -123,13 +124,13 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
 gl.clearColor(0, 0, 0, 1)
 // 只绘制正面（逆时针的三角形）
 gl.enable(gl.CULL_FACE)
-// 开始深度测试
+// 开启深度测试
 gl.enable(gl.DEPTH_TEST)
 
 // 平行光
 const directionalLight = {
   color: [1, 1, 1],
-  direction: [1, 0, 1],
+  direction: [1, 0, 0],
   intensity: 1,
 }
 const lightDirectionLocation = gl.getUniformLocation(program, 'u_LightDirection')
@@ -140,11 +141,15 @@ gl.uniform3fv(lightColorLocation, directionalLight.color)
 gl.uniform1f(lightIntensity, directionalLight.intensity)
 
 const modelMatrixLocation = gl.getUniformLocation(program, 'u_ModelMatrix')
+const normalMatrixLocation = gl.getUniformLocation(program, 'u_NormalMatrix')
 const modelMatrix = new Matrix4()
+const normalMatrix = new Matrix4()
 const viewMatrix = Matrix4.lookAt(new Vector3(0, 0, 500), new Vector3(0, 0, 0), new Vector3(0, 1, 0))
 const rotationX = Matrix4.rotationX((Math.PI / 180) * 1)
 const rotationY = Matrix4.rotationY((Math.PI / 180) * 1)
 const rotationZ = Matrix4.rotationZ((Math.PI / 180) * 1)
+const scaling = Matrix4.scaling(new Vector3(2, 1, 1))
+modelMatrix.premultiply(scaling)
 const projectionMatrix = Matrix4.perspective((45 / 180) * Math.PI, window.innerWidth / window.innerHeight, 1, 2000)
 const projMatrixLocation = gl.getUniformLocation(program, 'u_ProjMatrix')
 gl.uniformMatrix4fv(projMatrixLocation, false, projectionMatrix.elements)
@@ -158,7 +163,11 @@ function render() {
   modelMatrix.premultiply(rotationX)
   modelMatrix.premultiply(rotationY)
   modelMatrix.premultiply(rotationZ)
+  // 求模型矩阵的逆转置矩阵
+  normalMatrix.setInverseOf(modelMatrix)
+  normalMatrix.transpose()
   gl.uniformMatrix4fv(modelMatrixLocation, false, modelMatrix.elements)
+  gl.uniformMatrix4fv(normalMatrixLocation, false, normalMatrix.elements)
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_BYTE, 0)
   requestAnimationFrame(render)
 }

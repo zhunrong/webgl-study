@@ -71,7 +71,7 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW)
 gl.clearColor(0, 0, 0, 1)
 // 只绘制正面（逆时针的三角形）
 gl.enable(gl.CULL_FACE)
-// 开始深度测试
+// 开启深度测试
 gl.enable(gl.DEPTH_TEST)
 
 const modelMatrixLocation = gl.getUniformLocation(program, 'u_ModelMatrix')
