@@ -1,6 +1,5 @@
 import Matrix4 from './math/Matrix4'
-import Vector3 from './math/Vector3'
-import './webgl/webgl19'
+import './webgl/webgl20'
 const mat4 = new Matrix4().set(
   1, 0, 0, 1,
   0, 1, 0, 2,

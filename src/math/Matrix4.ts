@@ -166,6 +166,62 @@ export class Matrix4 {
   }
 
   /**
+   * 将当前矩阵设为平移矩阵
+   * @param vec3
+   */
+  public setTranslation(vec3: Vector3) {
+    Mat4.fromTranslation(this.elements, vec3.elements)
+    return this
+  }
+
+  /**
+   * 平移
+   * @param vec3
+   */
+  public translate(vec3: Vector3) {
+    Mat4.translate(this.elements, this.elements, vec3.elements)
+    return this
+  }
+
+  /**
+   * 将当前矩阵设为旋转矩阵
+   * @param radian
+   * @param axis
+   */
+  public setRotation(radian: number, axis: Vector3) {
+    Mat4.fromRotation(this.elements, radian, axis.elements)
+    return this
+  }
+
+  /**
+   * 旋转
+   * @param radian
+   * @param axis
+   */
+  public rotate(radian: number, axis: Vector3) {
+    Mat4.rotate(this.elements, this.elements, radian, axis.elements)
+    return this
+  }
+
+  /**
+   * 将当前矩阵设为缩放矩阵
+   * @param vec3
+   */
+  public setScaling(vec3: Vector3) {
+    Mat4.fromScaling(this.elements, vec3.elements)
+    return this
+  }
+
+  /**
+   * 缩放
+   * @param vec3
+   */
+  public scale(vec3: Vector3) {
+    Mat4.scale(this.elements, this.elements, vec3.elements)
+    return this
+  }
+
+  /**
    * 将a矩阵与b矩阵相乘，结果矩阵赋给当前矩阵
    * @param a
    * @param b
@@ -189,6 +245,14 @@ export class Matrix4 {
    */
   public multiply(mat4: Matrix4) {
     return this.multiplyMatrices(this, mat4)
+  }
+
+  /**
+   * 将当前矩阵设为单位矩阵
+   */
+  public identity() {
+    Mat4.identity(this.elements)
+    return this
   }
 
   /**
