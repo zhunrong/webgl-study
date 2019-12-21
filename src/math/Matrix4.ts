@@ -4,6 +4,17 @@ import Vector3 from './Vector3'
 export class Matrix4 {
 
   /**
+   * 创建任意轴旋转矩阵
+   * @param radian
+   * @param axis
+   */
+  public static rotation(radian: number, axis: Vector3) {
+    const mat4 = new Matrix4()
+    Mat4.fromRotation(mat4.elements, radian, axis.elements)
+    return mat4
+  }
+
+  /**
    * 创建x轴旋转矩阵
    * @param radian
    */
@@ -115,6 +126,46 @@ export class Matrix4 {
   public elements = Mat4.create()
 
   /**
+   * 以行主序设置矩阵元素
+   * @param e11
+   * @param e12
+   * @param e13
+   * @param e14
+   * @param e21
+   * @param e22
+   * @param e23
+   * @param e24
+   * @param e31
+   * @param e32
+   * @param e33
+   * @param e34
+   * @param e41
+   * @param e42
+   * @param e43
+   * @param e44
+   */
+  public set(e11: number, e12: number, e13: number, e14: number, e21: number, e22: number, e23: number, e24: number, e31: number, e32: number, e33: number, e34: number, e41: number, e42: number, e43: number, e44: number) {
+    const elements = this.elements
+    elements[0] = e11
+    elements[1] = e21
+    elements[2] = e31
+    elements[3] = e41
+    elements[4] = e12
+    elements[5] = e22
+    elements[6] = e32
+    elements[7] = e42
+    elements[8] = e13
+    elements[9] = e23
+    elements[10] = e33
+    elements[11] = e43
+    elements[12] = e14
+    elements[13] = e24
+    elements[14] = e34
+    elements[15] = e44
+    return this
+  }
+
+  /**
    * 将a矩阵与b矩阵相乘，结果矩阵赋给当前矩阵
    * @param a
    * @param b
@@ -163,6 +214,23 @@ export class Matrix4 {
   public setInverseOf(mat4: Matrix4) {
     Mat4.invert(this.elements, mat4.elements)
     return this
+  }
+
+  /**
+   * 复制矩阵mat4
+   * @param mat4
+   */
+  public copy(mat4: Matrix4) {
+    Mat4.copy(this.elements, mat4.elements)
+    return this
+  }
+
+  /**
+   * 克隆
+   */
+  public clone() {
+    const m = new Matrix4()
+    return m.copy(this)
   }
 
   /**
